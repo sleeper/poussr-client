@@ -27,8 +27,33 @@ describe "poussr-client" do
       PoussrClient.logger = logger
       PoussrClient.logger.debug('foo')
       PoussrClient.logger = nil
+    end    
+  end
+
+  describe "when configured" do
+    before do
+      PoussrClient.url = "http://someserver.com:1234/base"
     end
 
+    after do
+      PoussrClient.host = nil
+      PoussrClient.port = nil
+      PoussrClient.base = nil
+    end
+
+    describe ".[]" do
+      
+      it "should return a channel" do
+        PoussrClient['mychannel'].should be_kind_of(PoussrClient::Channel)
+      end
+
+      it "should reuse the same Channel object" do
+        ch1 = PoussrClient['mychannel']
+        ch2 = PoussrClient['mychannel']
+        ch2.object_id.should == ch1.object_id
+      end
+      
+    end
     
   end
 

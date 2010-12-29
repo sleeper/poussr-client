@@ -21,7 +21,14 @@ module PoussrClient
       self.port = uri.port
       self.base = uri.path
     end
+
+    def [](channel)
+      @channels ||= {}
+      @channels[channel] ||= Channel.new
+    end
     
   end
   
 end
+
+require 'poussr_client/channel'
