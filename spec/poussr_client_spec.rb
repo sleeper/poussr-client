@@ -61,7 +61,7 @@ describe "poussr-client" do
       
       it "should pass the url to the Channel object" do
         ch1 = PoussrClient['thechannel']
-        ch1.url.should == PoussrClient.url
+        ch1.url.to_s.should match(PoussrClient.url.to_s)
       end
 
       it "should pass the name to the Channel object" do

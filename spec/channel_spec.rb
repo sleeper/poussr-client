@@ -13,7 +13,7 @@ describe PoussrClient::Channel do
 
   it "should be passed the URL" do
     ch = PoussrClient['mychannel']
-    ch.url.should == PoussrClient.url
+    ch.url.to_s.should match( PoussrClient.url.to_s )
   end
 
   it "should be passed the channel name" do
@@ -72,23 +72,67 @@ describe PoussrClient::Channel do
   end
 
   describe "trigger_async" do
-    # before :each do
-    #   WebMock.reset_webmock
-    #   WebMock.disable_net_connect!
+    before :each do
+      WebMock.reset!
+      WebMock.disable_net_connect!
+      @url_regexp = %r{/base/channels/mychannel/events}
+    end
 
-    #   @url_regexp = %r{/base/channels/mychannel/events}
-    # end
+    it 'should try to talk to the configured host and port' do
+      EM.run {
+        stub_request(:post, @url_regexp).to_return(:status => 202)
+        channel = PoussrClient::Channel.new(PoussrClient.url, 'mychannel')
+        channel.trigger_async('myevent', 'my data').callback {
+          WebMock.should have_requested(:post, %r{http://someserver.com:12345})
+          EM.stop
+        }
+      }
+    end
 
-    # it 'should try to talk to the configured host and port' do
-    #   EM.run {
-    #     stub_request(:post, @url_regexp).to_return(:status => 202)
-    #     channel = PoussrClient::Channel.new(PoussrClient.url, 'mychannel')
-    #     channel.trigger_async('myevent', 'my data').callback {
-    #       WebMock.should have_requested(:post, %r{http://someserver.com:12345})
-    #       EM.stop
-    #     }
-    #   }
-    # end
+    it 'should form correctly the needed URL' do
+      EM.run {
+        stub_request(:post, @url_regexp).to_return(:status => 202)
+        channel = PoussrClient::Channel.new(PoussrClient.url, 'mychannel')
+        channel.trigger_async('myevent', 'my data').callback {
+          WebMock.should have_requested(:post, %r{http://someserver.com:12345}).with do |req|
+            req.path = PoussrClient.url.path + "/channels/mychannel/events"
+            req.body = 'my data'
+            req.query = 'name=myevent'
+            req.headers = {'Content-Type' => 'application/json'}
+          end
+          EM.stop
+        }
+      }
+    end
+
+    it 'should encode body as JSON' do
+      EM.run {
+        stub_request(:post, @url_regexp).to_return(:status => 202)
+        channel = PoussrClient::Channel.new(PoussrClient.url, 'mychannel')
+        data = {"id" => 43}
+        channel.trigger_async('myevent', data).callback {
+          WebMock.should have_requested(:post, %r{http://someserver.com:12345}).with( :body => JSON.generate(data))
+          EM.stop
+        }
+      }
+    end
+    it 'should return true if 202 is received' do
+      EM.run {
+        stub_request(:post, @url_regexp).to_return(:status => 202)
+        channel = PoussrClient::Channel.new(PoussrClient.url, 'mychannel')
+        d = channel.trigger_async('myevent', 'my data')
+        d.callback {
+          WebMock.should have_requested(:post, %r{http://someserver.com:12345})
+          EM.stop
+        }
+        d.errback {
+          fail
+          EM.stop
+        }
+      }
+    end
+
+    it 'should return false and log in case of error'
     
   end
 

@@ -2,7 +2,8 @@ require 'logger'
 require 'uri'
 
 module PoussrClient
-
+  class Error < RuntimeError; end
+  
   class << self
     attr_accessor :host, :port, :base
     attr_writer :logger
