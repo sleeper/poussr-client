@@ -46,6 +46,22 @@ describe PoussrClient::Channel do
       @channel.trigger('myevent', data)
       WebMock.should have_requested(:post, %r{http://someserver.com:12345}).with( :body => JSON.generate(data))
     end
+
+    it 'should return true if 202 is received' do
+      @channel.trigger('myevent', 'my data').should be_true      
+    end
+
+    it 'should return false and log in case of error' do
+      WebMock.stub_request(
+        :post, %r{/base/channels/mychannel/events}
+                           ).to_return(:status => 400)
+      logger = double('logger')
+      logger.should_receive(:error)
+      old_logger = PoussrClient.logger
+      PoussrClient.logger = logger
+      @channel.trigger('myevent', 'my data').should be_false
+      PoussrClient.logger = old_logger
+    end
     
   end
 

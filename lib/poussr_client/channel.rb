@@ -23,6 +23,14 @@ module PoussrClient
       
       response = @http_sync.post("#{path}",
                                  request.body, { 'Content-Type'=> 'application/json' })
+
+      case response.code.to_i
+      when 202
+        return true
+      else
+        PoussrClient.logger.error("Bad request: #{request.body} -> #{response.code}")
+        return false
+      end
     end
     
   end
