@@ -31,4 +31,5 @@ module PoussrClient
   
 end
 
+require 'poussr_client/request'
 require 'poussr_client/channel'
