@@ -4,10 +4,11 @@ module PoussrClient
 
   class Channel
 
-    attr_reader :url
+    attr_reader :url, :name
     
-    def initialize(url)
+    def initialize(url, name)
       @url = url
+      @name = name
     end
     
     def trigger(event, data)
@@ -19,7 +20,7 @@ module PoussrClient
                      end
 
       request = Request.new(event, data)
-      path = @url.path + "/channels/mychannel/events?#{request.query}"
+      path = @url.path + "/channels/#{@name}/events?#{request.query}"
       
       response = @http_sync.post("#{path}",
                                  request.body, { 'Content-Type'=> 'application/json' })

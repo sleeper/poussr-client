@@ -15,6 +15,12 @@ describe PoussrClient::Channel do
     ch = PoussrClient['mychannel']
     ch.url.should == PoussrClient.url
   end
+
+  it "should be passed the channel name" do
+    ch = PoussrClient['mychannel']
+    ch.name.should == 'mychannel'
+  end
+
   
   describe "trigger" do
 
@@ -66,6 +72,24 @@ describe PoussrClient::Channel do
   end
 
   describe "trigger_async" do
+    # before :each do
+    #   WebMock.reset_webmock
+    #   WebMock.disable_net_connect!
+
+    #   @url_regexp = %r{/base/channels/mychannel/events}
+    # end
+
+    # it 'should try to talk to the configured host and port' do
+    #   EM.run {
+    #     stub_request(:post, @url_regexp).to_return(:status => 202)
+    #     channel = PoussrClient::Channel.new(PoussrClient.url, 'mychannel')
+    #     channel.trigger_async('myevent', 'my data').callback {
+    #       WebMock.should have_requested(:post, %r{http://someserver.com:12345})
+    #       EM.stop
+    #     }
+    #   }
+    # end
+    
   end
 
 end
