@@ -6,7 +6,8 @@ module PoussrClient
   class << self
     attr_accessor :host, :port, :base
     attr_writer :logger
-
+    attr_reader :url
+    
     def logger
       @logger ||= begin
                      log = Logger.new STDOUT
@@ -16,15 +17,15 @@ module PoussrClient
     end
 
     def url=(url)
-      uri = URI.parse(url)
-      self.host = uri.host
-      self.port = uri.port
-      self.base = uri.path
+      @url = URI.parse(url)
+      self.host = @url.host
+      self.port = @url.port
+      self.base = @url.path
     end
 
     def [](channel)
       @channels ||= {}
-      @channels[channel] ||= Channel.new
+      @channels[channel] ||= Channel.new(@url)
     end
     
   end

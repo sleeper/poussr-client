@@ -4,19 +4,22 @@ module PoussrClient
 
   class Channel
 
+    attr_reader :url
+    
+    def initialize(url)
+      @url = url
+    end
+    
     def trigger(event, data)
       require 'net/http' unless defined?(Net::HTTP)
 
-      host = "someserver.com"
-      port = 12345
-      body = data
       @http_sync ||= begin
-                       http = Net::HTTP.new(host, port)
+                       http = Net::HTTP.new(@url.host, @url.port)
                        http
                      end
 
       request = Request.new(event, data)
-      path = "/base/channels/mychannel/events?#{request.query}"
+      path = @url.path + "/channels/mychannel/events?#{request.query}"
       
       response = @http_sync.post("#{path}",
                                  request.body, { 'Content-Type'=> 'application/json' })

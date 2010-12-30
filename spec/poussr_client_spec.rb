@@ -16,6 +16,12 @@ describe "poussr-client" do
       PoussrClient.base.should == "/base/of/the/api"
     end
 
+    it "should return url if asked so" do
+      url = "http://someserver.com:1234/base/of/the/api"
+      PoussrClient.url = url
+      PoussrClient.url.should == URI.parse(url)
+    end
+    
     it "should use standard logger by default" do
       PoussrClient.logger.debug('foo')
       PoussrClient.logger.should be_kind_of(Logger)
@@ -53,6 +59,11 @@ describe "poussr-client" do
         ch2.object_id.should == ch1.object_id
       end
       
+      it "should pass the url to the Channel object" do
+        ch1 = PoussrClient['thechannel']
+        ch1.url.should == PoussrClient.url
+      end
+
     end
     
   end
