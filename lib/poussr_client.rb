@@ -28,6 +28,11 @@ module PoussrClient
       @channels ||= {}
       @channels[channel] ||= Channel.new(@url, channel)
     end
+
+    def []=(channel, value)
+      @channels ||= {}
+      @channels[channel] ||= value
+    end
     
   end
   

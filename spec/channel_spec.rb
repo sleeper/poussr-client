@@ -5,6 +5,10 @@ describe PoussrClient::Channel do
       PoussrClient.url = "http://someserver.com:12345/base"
     end
 
+  after(:each) do
+    PoussrClient['mychannel'] = nil    
+  end
+  
     after do
       PoussrClient.host = nil
       PoussrClient.port = nil
@@ -13,7 +17,8 @@ describe PoussrClient::Channel do
 
   it "should be passed the URL" do
     ch = PoussrClient['mychannel']
-    ch.url.to_s.should match( PoussrClient.url.to_s )
+    path = PoussrClient.url.to_s  + "/channels/mychannel/events"
+    ch.url.to_s.should match( path )
   end
 
   it "should be passed the channel name" do
