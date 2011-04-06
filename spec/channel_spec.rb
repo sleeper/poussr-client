@@ -33,7 +33,7 @@ describe PoussrClient::Channel do
       WebMock.disable_net_connect!
       WebMock.stub_request(
         :post, %r{/base/channels/mychannel/events}
-      ).to_return(:status => 202)
+      ).to_return(:status => 201)
       @channel = PoussrClient['mychannel']
     end
     
@@ -58,7 +58,7 @@ describe PoussrClient::Channel do
       WebMock.should have_requested(:post, %r{http://someserver.com:12345}).with( :body => JSON.generate(data))
     end
 
-    it 'should return true if 202 is received' do
+    it 'should return true if 201 is received' do
       @channel.trigger('myevent', 'my data').should be_true      
     end
 
@@ -85,7 +85,7 @@ describe PoussrClient::Channel do
 
     it 'should try to talk to the configured host and port' do
       EM.run {
-        stub_request(:post, @url_regexp).to_return(:status => 202)
+        stub_request(:post, @url_regexp).to_return(:status => 201)
         channel = PoussrClient::Channel.new(PoussrClient.url, 'mychannel')
         channel.trigger_async('myevent', 'my data').callback {
           WebMock.should have_requested(:post, %r{http://someserver.com:12345})
@@ -96,7 +96,7 @@ describe PoussrClient::Channel do
 
     it 'should form correctly the needed URL' do
       EM.run {
-        stub_request(:post, @url_regexp).to_return(:status => 202)
+        stub_request(:post, @url_regexp).to_return(:status => 201)
         channel = PoussrClient::Channel.new(PoussrClient.url, 'mychannel')
         channel.trigger_async('myevent', 'my data').callback {
           WebMock.should have_requested(:post, %r{http://someserver.com:12345}).with do |req|
@@ -112,7 +112,7 @@ describe PoussrClient::Channel do
 
     it 'should encode body as JSON' do
       EM.run {
-        stub_request(:post, @url_regexp).to_return(:status => 202)
+        stub_request(:post, @url_regexp).to_return(:status => 201)
         channel = PoussrClient::Channel.new(PoussrClient.url, 'mychannel')
         data = {"id" => 43}
         channel.trigger_async('myevent', data).callback {
@@ -121,9 +121,9 @@ describe PoussrClient::Channel do
         }
       }
     end
-    it 'should return true if 202 is received' do
+    it 'should return true if 201 is received' do
       EM.run {
-        stub_request(:post, @url_regexp).to_return(:status => 202)
+        stub_request(:post, @url_regexp).to_return(:status => 201)
         channel = PoussrClient::Channel.new(PoussrClient.url, 'mychannel')
         d = channel.trigger_async('myevent', 'my data')
         d.callback {

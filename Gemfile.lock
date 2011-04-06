@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    poussr-client (0.0.1)
+    poussr-client (0.0.2)
       json (~> 1.4.0)
 
 GEM
