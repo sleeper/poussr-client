@@ -55,11 +55,20 @@ module PoussrClient
 
       request = Request.new(event, data)
       
-      response = @http_sync.post("#{@url.path}?#{request.query}",
-                                 request.body, { 'Content-Type'=> 'application/json' })
-
+      begin
+        response = @http_sync.post("#{@url.path}?#{request.query}",
+                                   request.body,
+                                   { 'Content-Type'=> 'application/json' })
+      rescue Errno::EINVAL, Errno::ECONNRESET, Errno::ECONNREFUSED,
+             Timeout::Error, EOFError,
+             Net::HTTPBadResponse, Net::HTTPHeaderSyntaxError,
+        Net::ProtocolError => e
+        
+        PoussrClient.logger.error("Exception on request: #{e.message} (#{e.class})")
+      end
+      
       case response.code.to_i
-      when 202
+      when 201
         return true
       else
         PoussrClient.logger.error("Bad request: #{request.body} -> #{response.code}")
