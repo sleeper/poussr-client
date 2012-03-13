@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "poussr-client"
-  s.version     = "0.0.3"
+  s.version     = "0.0.4"
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Frédérick Ros"]
   s.email       = ["frederick.ros@gmail.com"]
@@ -18,7 +18,7 @@ Gem::Specification.new do |s|
   
   s.add_development_dependency "rspec", "~> 2.0"
   s.add_development_dependency "webmock"
-  s.add_development_dependency "em-http-request", "~> 0.2.7"
+  s.add_development_dependency "em-http-request" #, "~> 0.2.7"
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
