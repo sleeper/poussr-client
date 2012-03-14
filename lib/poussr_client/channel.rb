@@ -18,12 +18,12 @@ module PoussrClient
       end
       require 'em-http' unless defined?(EventMachine::HttpRequest)
       
-      @http_async ||= EventMachine::HttpRequest.new(@url)
+      @http_async = EventMachine::HttpRequest.new(@url)
 
       request = PoussrClient::Request.new(event, data)
 
       deferrable = EM::DefaultDeferrable.new
-      
+
       http = @http_async.post({
         :query => request.query, :timeout => 2, :body => request.body,
         :head => {'Content-Type'=> 'application/json'}
